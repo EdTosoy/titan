@@ -3,7 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log/slog"
 	"net/http"
+	"os"
 )
 
 type config struct {
@@ -14,6 +16,7 @@ type config struct {
 
 type application struct {
 	config config
+	logger *slog.Logger
 }
 
 func main() {
@@ -24,16 +27,18 @@ func main() {
 	flag.StringVar(&config.version, "version", "1.0.0", "API version")
 	flag.Parse()
 
+	address := fmt.Sprintf(":%d", config.port)
+
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 	app := &application{
 		config: config,
+		logger: logger,
 	}
 
-	fmt.Printf("Start %s API on :%d\n", config.env, config.port)
-
-	address := fmt.Sprintf(":%d", config.port)
+	logger.Info("Starting server", "addr", address, "env", config.env)
 
 	err := http.ListenAndServe(address, app.routes())
 	if err != nil {
-		fmt.Println("Error Starting server: ", err)
+		logger.Error("server error", "error", err)
 	}
 }
