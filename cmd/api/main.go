@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"time"
+	"titan/internal/data"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
@@ -27,6 +28,7 @@ type application struct {
 	config config
 	logger *slog.Logger
 	db     *sql.DB
+	models data.Models
 }
 
 func main() {
@@ -45,14 +47,17 @@ func main() {
 	db, err := openDB(config)
 
 	if err != nil {
-		logger.Error("database connnection failed", "error", err)
+		logger.Error("database connection failed", "error", err)
 		os.Exit(1)
 	}
 	app := &application{
 		config: config,
 		logger: logger,
 		db:     db,
+		models: data.NewModels(db),
 	}
+
+	defer db.Close()
 
 	logger.Info("Starting server", "addr", address, "env", config.env)
 
