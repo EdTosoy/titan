@@ -28,7 +28,7 @@ A reusable, production-ready Go backend that can be copy-pasted to any client pr
 - [x] Optimistic locking
 
 ### Phase 2: Production Hardening
-- [ ] Migrations (`golang-migrate`)
+- [x] Migrations (`golang-migrate`)
 - [ ] Middleware (logging, panic recovery, rate limiting)
 - [ ] Input validation
 - [ ] Graceful shutdown
